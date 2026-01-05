@@ -10,59 +10,59 @@ type TeamScore = {
 const ROUNDS = 3;
 const TURN_DURATION = 60;
 
-const TEAM_COLORS = ['#f59e0b', '#22d3ee'];
+const TEAM_COLORS = ['#f59e0b', '#22d3ee', '#f472b6'];
 
 const BASE_CARDS = [
-  "Sabre en bois",
-  "Masque de carnaval",
-  "Jumelles",
-  "Gobelet thermos",
-  "Skate electrique",
-  "Echarpe rayee",
-  "Badge VIP",
-  "Casquette rouge",
-  "Kit de couture",
-  "Malle au tresor",
-  "Planche de surf",
-  "Pistolet a eau",
-  "Ventilateur de poche",
-  "Carnet de notes",
-  "Bouteille isotherme",
-  "Lampe a huile",
-  "Globe terrestre",
-  "Baguette de chef d orchestre",
-  "Tente de camping",
-  "Casque de pompier",
-  "Coffre-fort jouet",
-  "Radio vintage",
-  "Jeu de tarot",
-  "Raquette de tennis",
-  "Cloche de gare",
-  "Masque de ski",
-  "Sablier",
-  "Megaphone",
-  "Miroir de poche",
-  "Boite a musique",
-  "Kit de peinture",
-  "Drone pliable",
-  "Gant de cuisine",
-  "Livre de contes",
-  "Panier de pique-nique",
-  "Casque de chantier",
-  "Boule a facettes",
-  "Figurine de samourai",
-  "Gants de jardinage",
-  "Thermometre de cuisine",
-  "Tapis de yoga",
-  "Baton de majorette",
-  "Clavier mecanique",
-  "Micro karaoke",
-  "Bateau en bouteille",
-  "Harpe miniature",
-  "Palette graphique",
-  "Perche a selfie",
-  "Valise cabine",
-  "Boussole de randonnee",
+  "Lampe frontale",
+  "Sac a dos",
+  "Chaussure de rando",
+  "Batterie externe",
+  "Brosse a cheveux",
+  "Ballon de basket",
+  "Clavier sans fil",
+  "Figurine Lego",
+  "Tapis de souris",
+  "Tournevis",
+  "Piano jouet",
+  "Casque de ski",
+  "Torchon",
+  "Bouteille d eau",
+  "Couteau suisse",
+  "Brosse a dents",
+  "Camera instantanee",
+  "Micro cravate",
+  "Carnet a spirale",
+  "Vase en verre",
+  "Plante en pot",
+  "Lunettes de natation",
+  "Puzzle 500 pieces",
+  "Voiture telecommandee",
+  "Montre connectee",
+  "Balance de cuisine",
+  "Bougie parfumee",
+  "Ruban adhesif",
+  "Cahier de dessin",
+  "Bonnette anti vent",
+  "Harmonica",
+  "Chaussettes de sport",
+  "Mug isotherme",
+  "Cloche a vache",
+  "Livre de voyage",
+  "Sac banane",
+  "Balle anti stress",
+  "Casque gaming",
+  "Gourde inox",
+  "Rubiks Cube",
+  "Cle USB",
+  "Tablier",
+  "Basket montante",
+  "Planche a decouper",
+  "Paquet de cartes",
+  "Tapis de course miniature",
+  "Perche telescopique",
+  "Bague en bois",
+  "Brosse a barbe",
+  "Figurine d astronaute",
 ];
 
 const shuffle = (items: string[]) => {
@@ -77,6 +77,7 @@ const shuffle = (items: string[]) => {
 const createTeams = (): TeamScore[] => [
   { name: 'Équipe A', rounds: Array(ROUNDS).fill(0) },
   { name: 'Équipe B', rounds: Array(ROUNDS).fill(0) },
+  { name: 'Équipe C', rounds: Array(ROUNDS).fill(0) },
 ];
 
 export default function Home() {
@@ -205,7 +206,7 @@ export default function Home() {
           <div className="badge">Times Up express - 50 cartes - 3 rounds</div>
           <h1>Times Up Sprint</h1>
           <p>
-            2 équipes, 60 secondes par tour. Valide ou passe chaque carte, les 50 doivent tomber
+            3 équipes, 60 secondes par tour. Valide ou passe chaque carte, les 50 doivent tomber
             avant de passer au round suivant.
           </p>
           <div className="chips" style={{ marginTop: 12 }}>
