@@ -58,11 +58,23 @@ p {
 }
 
 .hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: start;
   margin-bottom: 24px;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+  flex: 1 1 0;
+}
+
+.hero-panel {
+  min-width: 260px;
+  flex: 1 1 0;
 }
 
 .badge {
@@ -82,6 +94,7 @@ p {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
+  align-items: stretch;
 }
 
 .card {
@@ -90,6 +103,7 @@ p {
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
+  height: 100%;
 }
 
 .card-title {
@@ -138,6 +152,17 @@ p {
   gap: 12px;
 }
 
+.hero-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.actions-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 button {
   border: none;
   border-radius: 12px;
@@ -162,19 +187,19 @@ button:hover:not(:disabled) {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+  background: linear-gradient(135deg, #22d3ee, #f59e0b);
   color: #0b1120;
-  box-shadow: 0 10px 30px rgba(14, 165, 233, 0.45);
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #10b981, #34d399);
-  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 10px 26px rgba(34, 211, 238, 0.3);
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #f43f5e, #fb7185);
-  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.35);
+  background: linear-gradient(135deg, #f43f5e, #a855f7);
+  box-shadow: 0 10px 28px rgba(168, 85, 247, 0.35);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #f59e0b, #34d399);
+  box-shadow: 0 10px 28px rgba(52, 211, 153, 0.35);
 }
 
 .btn-ghost {
@@ -254,9 +279,40 @@ button:hover:not(:disabled) {
 }
 
 @media (max-width: 720px) {
+  main {
+    padding: 24px 16px 40px;
+  }
+
   .hero {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero-copy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .badge {
+    margin: 0 auto;
+  }
+
+  .hero-panel {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .chips {
+    justify-content: center;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    text-align: center;
   }
 
   .timer {
