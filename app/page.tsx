@@ -568,7 +568,9 @@ export default function Home() {
         <div className="surface card">
           <div>
             <p className="muted small-text">Carte actuelle</p>
-            <h2 className="card-title">
+            <h2
+              className={`card-title${!isRunning && currentCard && !roundFinished && !gameOver ? ' card-title-blur' : ''}`}
+            >
               {currentCard ? currentCard : roundFinished ? 'Round terminé' : "Plus de cartes"}
             </h2>
             <p className="muted small-text">
