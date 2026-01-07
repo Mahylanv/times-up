@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type TeamScore = {
   name: string;
@@ -94,6 +94,8 @@ export default function Home() {
   const [roundFinished, setRoundFinished] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [message, setMessage] = useState<string>('');
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioUnlockedRef = useRef(false);
 
   const cardsRemaining = deck.length;
   const currentCard = deck[0];
@@ -113,17 +115,45 @@ export default function Home() {
     return () => window.clearTimeout(timer);
   }, [isRunning, timeLeft]);
 
-  const playBuzzer = () => {
+  const unlockAudio = () => {
+    if (audioUnlockedRef.current) return;
     try {
-      const AudioCtx = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const audioCtx = new AudioCtx();
+      audioCtxRef.current = audioCtx;
+      const unlock = () => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0.0001;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.02);
+        audioUnlockedRef.current = true;
+      };
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(unlock).catch(() => {});
+      } else {
+        unlock();
+      }
+    } catch {
+      // Ignore audio errors.
+    }
+  };
+
+  const playBuzzer = () => {
+    try {
+      const audioCtx = audioCtxRef.current;
+      if (!audioCtx) return;
       const play = () => {
         const osc1 = audioCtx.createOscillator();
         const osc2 = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         const t0 = audioCtx.currentTime;
-        const duration = 0.8;
+        const duration = 1.5;
 
         osc1.type = 'sawtooth';
         osc2.type = 'triangle';
@@ -142,13 +172,9 @@ export default function Home() {
         osc2.start(t0);
         osc1.stop(t0 + duration);
         osc2.stop(t0 + duration);
-        osc2.onended = () => audioCtx.close();
+        osc2.onended = () => {};
       };
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(play).catch(() => {});
-      } else {
-        play();
-      }
+      audioCtx.resume().then(play).catch(() => {});
     } catch {
       // Ignore audio errors.
     }
@@ -196,6 +222,7 @@ export default function Home() {
       completeRound();
       return;
     }
+    unlockAudio();
     setMessage('');
     setIsRunning(true);
     setTimeLeft(TURN_DURATION);
