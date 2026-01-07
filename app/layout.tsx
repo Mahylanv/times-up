@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     default: 'Thempo',
     template: '%s | Thempo',
   },
-  description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+  description: "Thempo, un jeu de rapidité et de reflexion pour faire deviner des mots en équipe de plusieurs manières amusantes.",
   applicationName: 'Thempo',
   manifest: '/manifest.webmanifest',
   alternates: {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'Thempo',
     title: 'Thempo',
-    description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+    description: "Thempo, un jeu de rapidité et de reflexion pour faire deviner des mots en équipe de plusieurs manières amusantes.",
     images: [
       {
         url: '/og-image.png',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Thempo',
-    description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+    description: "Thempo, un jeu de rapidité et de reflexion pour faire deviner des mots en équipe de plusieurs manières amusantes.",
     images: ['/og-image.png'],
   },
   authors: [{ name: 'Thempo' }],
