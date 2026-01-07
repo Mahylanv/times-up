@@ -8,66 +8,228 @@ type TeamScore = {
 };
 
 const ROUNDS = 3;
-const TURN_DURATION = 60;
+const DEFAULT_TURN_DURATION = 60;
+const DEFAULT_CARDS_PER_ROUND = 50;
 
 const MIN_TEAMS = 2;
 const MAX_TEAMS = 5;
 const TEAM_LABELS = ['A', 'B', 'C', 'D', 'E'];
 const TEAM_COLORS = ['#f59e0b', '#22d3ee', '#f472b6', '#34d399', '#a78bfa'];
 const ROUND_RULES = ['Description libre', 'Un seul mot', 'Mimes'];
+const TURN_OPTIONS = [15, 30, 60, 90, 120];
+const CARD_OPTIONS = [10, 20, 30, 50, 100];
 
-const BASE_CARDS = [
-  "Lampe frontale",
-  "Sac a dos",
-  "Chaussure de rando",
-  "Batterie externe",
-  "Brosse a cheveux",
-  "Ballon de basket",
-  "Clavier sans fil",
-  "Figurine Lego",
-  "Tapis de souris",
-  "Tournevis",
-  "Piano jouet",
-  "Casque de ski",
-  "Torchon",
+const OBJECT_CARDS = [
+  "Planche a repasser",
+  "Tronconneuse",
+  "Guitare",
+  "Telephone portable",
+  "Lampe de chevet",
+  "Aspirateur",
+  "Casserole",
+  "Verre a vin",
+  "Tasse a cafe",
+  "Couteau",
+  "Fourchette",
+  "Cuillere",
   "Bouteille d eau",
-  "Couteau suisse",
-  "Brosse a dents",
-  "Camera instantanee",
-  "Micro cravate",
-  "Carnet a spirale",
-  "Vase en verre",
-  "Plante en pot",
-  "Lunettes de natation",
-  "Puzzle 500 pieces",
-  "Voiture telecommandee",
-  "Montre connectee",
-  "Balance de cuisine",
-  "Bougie parfumee",
-  "Ruban adhesif",
-  "Cahier de dessin",
-  "Bonnette anti vent",
-  "Harmonica",
-  "Chaussettes de sport",
-  "Mug isotherme",
-  "Cloche a vache",
-  "Livre de voyage",
-  "Sac banane",
-  "Balle anti stress",
-  "Casque gaming",
-  "Gourde inox",
-  "Rubiks Cube",
-  "Cle USB",
-  "Tablier",
-  "Basket montante",
-  "Planche a decouper",
-  "Paquet de cartes",
-  "Tapis de course miniature",
-  "Perche telescopique",
-  "Bague en bois",
-  "Brosse a barbe",
-  "Figurine d astronaute",
+  "Parapluie",
+  "Sac a dos",
+  "Chaussure",
+  "Casque audio",
+  "Clavier",
+  "Souris",
+  "Ecran",
+  "Camera",
+  "Boussole",
+  "Carte au tresor",
+  "Bougie",
+  "Velo",
+  "Trottinette",
+  "Planche de surf",
+  "Raquette de tennis",
+  "Ballon de basket",
+  "Masque",
+  "Lunettes de soleil",
+  "Chapeau",
+  "Echarpe",
+  "Montre",
+  "Bracelet",
+  "Pinceau",
+  "Cahier",
+  "Stylo",
+  "Crayon",
+  "Gomme",
+  "Regle",
+  "Marteau",
+  "Scie",
+  "Tournevis",
+  "Cle a molette",
+  "Pince",
+  "Valise",
+  "Sac de couchage",
+  "Tente",
+  "Micro",
+  "Haut parleur",
+  "Manette",
+  "Console",
+  "Telecommande",
+  "Tablette",
+  "Ordinateur",
+  "Imprimante",
+  "Tableau blanc",
+  "Thermos",
+  "Gourde",
+  "Panier de pique nique",
+  "Tapis de yoga",
+  "Perche a selfie",
+  "Batterie externe",
+  "Chargeur",
+  "Drone",
+  "Jumelles",
+  "Tondeuse",
+  "Perceuse",
+  "Rouleau de peinture",
+  "Poubelle",
+  "Cafetiere",
+  "Fer a repasser",
+  "Seche cheveux",
+  "Ancre",
+  "Sablier",
+  "Microscope",
+  "Telescope",
+  "Thermometre",
+  "Parachute",
+  "Gilet de sauvetage",
+  "Katana",
+  "Accordeon",
+  "Ukulele",
+  "Vinyle",
+  "Projecteur",
+  "Pompe a velo",
+  "Casque de chantier",
+  "Toque de chef",
 ];
+
+const ACTION_CARDS = [
+  "Courir",
+  "Sauter",
+  "Danser",
+  "Chanter",
+  "Nager",
+  "Cuisiner",
+  "Laver",
+  "Balayer",
+  "Conduire",
+  "Voler",
+  "Escalader",
+  "Dessiner",
+  "Peindre",
+  "Bricoler",
+  "Dormir",
+  "Rire",
+  "Pleurer",
+  "Crier",
+  "Murmurer",
+  "Se battre",
+  "Se cacher",
+  "Ramper",
+  "Glisser",
+  "Tomber",
+  "Se relever",
+  "Applaudir",
+  "Siffler",
+  "Boire",
+  "Manger",
+  "Vomir",
+  "Tousser",
+  "Eternuer",
+  "Telephoner",
+  "Ecrire",
+  "Lire",
+  "Compter",
+  "Jouer",
+  "Lancer",
+  "Attraper",
+  "Pousser",
+  "Tirer",
+  "Porter",
+  "Soulever",
+  "Boxer",
+  "Dribbler",
+  "Patiner",
+  "Skier",
+  "Ramer",
+  "Surfer",
+  "Plonger",
+  "Jardiner",
+  "Coudre",
+  "Reparer",
+  "Nettoyer",
+  "Chercher",
+  "Trouver",
+  "Frapper",
+  "Explorer",
+  "Sauver",
+  "Poursuivre",
+  "Se maquiller",
+  "Se deguiser",
+  "Se baigner",
+];
+
+const CHARACTER_CARDS = [
+  "Dark Vador",
+  "Indiana Jones",
+  "Terminator",
+  "Harry Potter",
+  "Ron Weasley",
+  "Gandalf",
+  "Gollum",
+  "Spiderman",
+  "Batman",
+  "Superman",
+  "Wonder Woman",
+  "Joker",
+  "Harley Quinn",
+  "Iron Man",
+  "Captain America",
+  "Thor",
+  "Hulk",
+  "Sherlock Holmes",
+  "James Bond",
+  "Lara Croft",
+  "Katniss Everdeen",
+  "Zelda",
+  "Mario",
+  "Luigi",
+  "Pikachu",
+  "Sonic",
+  "Kratos",
+  "Asterix",
+  "Obelix",
+  "Tintin",
+  "Zorro",
+  "Shrek",
+  "Jack Sparrow",
+  "Bob Marley",
+  "Elon Musk",
+  "Moise",
+  "Albert Einstein",
+  "Cleopatre",
+  "Napoleon",
+  "Charlie Chaplin",
+  "Michael Jackson",
+  "Bruce Lee",
+  "Goku",
+  "Daenerys Targaryen",
+  "Jackie Chan",
+  "Beyonce",
+  "Serena Williams",
+  "Lionel Messi",
+  "Luffy",
+];
+
+const BASE_CARDS = [...OBJECT_CARDS, ...ACTION_CARDS, ...CHARACTER_CARDS];
 
 const shuffle = (items: string[]) => {
   const deck = [...items];
@@ -78,6 +240,8 @@ const shuffle = (items: string[]) => {
   return deck;
 };
 
+const buildDeck = (count: number) => shuffle(BASE_CARDS).slice(0, count);
+
 const createTeams = (count = MIN_TEAMS): TeamScore[] =>
   Array.from({ length: count }, (_, idx) => ({
     name: `Équipe ${TEAM_LABELS[idx]}`,
@@ -86,14 +250,17 @@ const createTeams = (count = MIN_TEAMS): TeamScore[] =>
 
 export default function Home() {
   const [round, setRound] = useState(1);
-  const [deck, setDeck] = useState<string[]>(() => shuffle(BASE_CARDS));
+  const [deck, setDeck] = useState<string[]>(() => buildDeck(DEFAULT_CARDS_PER_ROUND));
   const [teams, setTeams] = useState<TeamScore[]>(() => createTeams());
   const [currentTeam, setCurrentTeam] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
+  const [turnDuration, setTurnDuration] = useState(DEFAULT_TURN_DURATION);
+  const [cardsPerRound, setCardsPerRound] = useState(DEFAULT_CARDS_PER_ROUND);
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_TURN_DURATION);
   const [roundFinished, setRoundFinished] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [message, setMessage] = useState<string>('');
+  const [showSettings, setShowSettings] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioUnlockedRef = useRef(false);
 
@@ -104,6 +271,7 @@ export default function Home() {
     () => teams.reduce((acc, team) => acc + team.rounds[round - 1], 0),
     [round, teams],
   );
+  const canEditSettings = !isRunning && (roundFinished || cardsValidatedThisRound === 0);
 
   useEffect(() => {
     if (!isRunning) return undefined;
@@ -153,7 +321,7 @@ export default function Home() {
         const osc2 = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         const t0 = audioCtx.currentTime;
-        const duration = 1.5;
+        const duration = 0.8;
 
         osc1.type = 'sawtooth';
         osc2.type = 'triangle';
@@ -183,7 +351,7 @@ export default function Home() {
   const endTurn = () => {
     playBuzzer();
     setIsRunning(false);
-    setTimeLeft(TURN_DURATION);
+    setTimeLeft(turnDuration);
     setMessage("Temps écoulé ! À l'équipe suivante.");
     setCurrentTeam((prev) => (prev + 1) % teams.length);
   };
@@ -191,7 +359,7 @@ export default function Home() {
   const completeRound = () => {
     setIsRunning(false);
     setRoundFinished(true);
-    setTimeLeft(TURN_DURATION);
+    setTimeLeft(turnDuration);
     setMessage(`Round ${round} terminé !`);
     if (round === ROUNDS) {
       setGameOver(true);
@@ -206,10 +374,10 @@ export default function Home() {
     const nextRound = round + 1;
     const nextTeam = (currentTeam + 1) % teams.length;
     setRound(nextRound);
-    setDeck(shuffle(BASE_CARDS));
+    setDeck(buildDeck(cardsPerRound));
     setRoundFinished(false);
     setIsRunning(false);
-    setTimeLeft(TURN_DURATION);
+    setTimeLeft(turnDuration);
     setCurrentTeam(nextTeam);
     setMessage(
       `Round ${nextRound} lancé, ${ROUND_RULES[nextRound - 1].toLowerCase()} - à ${teams[nextTeam].name} de jouer !`,
@@ -225,7 +393,7 @@ export default function Home() {
     unlockAudio();
     setMessage('');
     setIsRunning(true);
-    setTimeLeft(TURN_DURATION);
+    setTimeLeft(turnDuration);
   };
 
   const updateScore = () => {
@@ -265,11 +433,11 @@ export default function Home() {
 
   const resetGame = () => {
     setRound(1);
-    setDeck(shuffle(BASE_CARDS));
+    setDeck(buildDeck(cardsPerRound));
     setTeams(createTeams());
     setCurrentTeam(0);
     setIsRunning(false);
-    setTimeLeft(TURN_DURATION);
+    setTimeLeft(turnDuration);
     setRoundFinished(false);
     setGameOver(false);
     setMessage('Nouvelle partie, à Équipe A de lancer !');
@@ -286,15 +454,29 @@ export default function Home() {
     });
   };
 
+  const handleTurnDurationChange = (value: number) => {
+    if (!canEditSettings) return;
+    setTurnDuration(value);
+    setTimeLeft(value);
+  };
+
+  const handleCardsPerRoundChange = (value: number) => {
+    if (!canEditSettings) return;
+    setCardsPerRound(value);
+    if (!roundFinished) {
+      setDeck(buildDeck(value));
+    }
+  };
+
   return (
     <main>
       <div className="hero">
         <div className="hero-copy">
-          <div className="badge">Times Up express - 50 cartes - 3 rounds</div>
-          <h1>Times Up Sprint</h1>
+          <div className="badge">Thempo - {cardsPerRound} cartes - {ROUNDS} rounds</div>
+          <h1>Thempo</h1>
           <p>
-            {teams.length} équipes, 60 secondes par tour. Valide ou passe chaque carte, les 50
-            doivent tomber avant de passer au round suivant.
+            {teams.length} équipes, {turnDuration} secondes par tour. Décris, puis un mot, puis mimes.
+            Valide ou passe chaque carte, les {cardsPerRound} doivent tomber avant de passer au round suivant.
           </p>
           <div className="chips" style={{ marginTop: 12 }}>
             <div className="pill">Round {round} / {ROUNDS}</div>
@@ -310,9 +492,56 @@ export default function Home() {
             </span>
             <small className="muted">Tour en cours</small>
           </div>
-          <div className="timer">
-            {timeLeft}s <small>chrono</small>
+          <div className="timer-row">
+            <div className="timer">
+              {timeLeft}s <small>chrono</small>
+            </div>
+            <button
+              className="btn-ghost btn-gear"
+              onClick={() => setShowSettings((prev) => !prev)}
+              aria-label="Ouvrir les réglages"
+              disabled={isRunning}
+            >
+              ⚙
+            </button>
           </div>
+          {showSettings && (
+            <div className="settings-panel">
+              <div className="settings-block">
+                <p className="muted small-text">Durée du chrono</p>
+                <div className="settings-options">
+                  {TURN_OPTIONS.map((value) => (
+                    <button
+                      key={value}
+                      className={`btn-chip${turnDuration === value ? ' active' : ''}`}
+                      onClick={() => handleTurnDurationChange(value)}
+                      disabled={!canEditSettings}
+                    >
+                      {value}s
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="settings-block">
+                <p className="muted small-text">Nombre de cartes</p>
+                <div className="settings-options">
+                  {CARD_OPTIONS.map((value) => (
+                    <button
+                      key={value}
+                      className={`btn-chip${cardsPerRound === value ? ' active' : ''}`}
+                      onClick={() => handleCardsPerRoundChange(value)}
+                      disabled={!canEditSettings}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {!canEditSettings && (
+                <p className="muted small-text">Réglages verrouillés pendant le round.</p>
+              )}
+            </div>
+          )}
           <div className="hero-actions" style={{ marginTop: 12 }}>
             <div className="actions">
               <button
@@ -367,7 +596,7 @@ export default function Home() {
         <div className="surface card">
           <div className="inline" style={{ justifyContent: 'space-between' }}>
             <h3>Progression du round</h3>
-            <span className="pill">{cardsValidatedThisRound}/50 validées</span>
+            <span className="pill">{cardsValidatedThisRound}/{cardsPerRound} validées</span>
           </div>
           <div className="stack">
             <div className="score-row">
@@ -380,7 +609,7 @@ export default function Home() {
             </div>
             <div className="score-row">
               <span>Chrono par tour</span>
-              <strong>{TURN_DURATION}s</strong>
+              <strong>{turnDuration}s</strong>
             </div>
             <div className="score-row">
               <span>Règle du round</span>
@@ -405,10 +634,10 @@ export default function Home() {
       </div>
 
       <div className="surface" style={{ marginTop: 18 }}>
-        <div className="inline" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
-          <h3>Scores par équipe</h3>
-          <span className="pill">3 rounds - 50 cartes remises en jeu à chaque manche</span>
-        </div>
+          <div className="inline" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+            <h3>Scores par équipe</h3>
+          <span className="pill">{ROUNDS} rounds - {cardsPerRound} cartes remises en jeu à chaque manche</span>
+          </div>
         <div className="scores">
           {teams.map((team, idx) => {
             const total = team.rounds.reduce((a, b) => a + b, 0);

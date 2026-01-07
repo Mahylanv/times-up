@@ -2,13 +2,15 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Times Up Sprint',
-    short_name: 'Times Up',
-    description: 'Jeu Times Up en equipes, 3 rounds et 50 cartes.',
+    name: 'Thempo',
+    short_name: 'Thempo',
+    description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds.",
     start_url: '/',
     display: 'standalone',
     background_color: '#0f172a',
     theme_color: '#0f172a',
+    lang: 'fr',
+    categories: ['games', 'entertainment'],
     icons: [
       {
         src: '/icon-192.png',

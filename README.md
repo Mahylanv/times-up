@@ -1,6 +1,6 @@
-# Times Up Sprint
+# Thempo
 
-Jeu Times Up rapide en 3 rounds avec cartes aleatoires, equipes variables et mode PWA.
+Jeu de cartes rapide en 3 rounds avec equipes variables et mode PWA.
 
 ## Lancer en local
 

@@ -1,6 +1,7 @@
-const CACHE_NAME = 'timesup-static-v1';
+const CACHE_NAME = 'timesup-static-v2';
 const OFFLINE_URLS = [
   '/',
+  '/offline.html',
   '/manifest.webmanifest',
   '/icon-192.png',
   '/icon-512.png',
@@ -37,15 +38,21 @@ self.addEventListener('fetch', (event) => {
       fetch(event.request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, copy).catch(() => {});
+            cache.put('/', copy).catch(() => {});
+          });
           return response;
         })
-        .catch(() => caches.match('/') || caches.match('/')),
+        .catch(() =>
+          caches.match(event.request).then((cached) => cached || caches.match('/offline.html')),
+        ),
     );
     return;
   }
 
   const isStaticAsset =
+    url.pathname.startsWith('/_next/') ||
     event.request.destination === 'style' ||
     event.request.destination === 'script' ||
     event.request.destination === 'image' ||
@@ -54,13 +61,31 @@ self.addEventListener('fetch', (event) => {
   if (isStaticAsset) {
     event.respondWith(
       caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          return response;
-        });
+        const fetchPromise = fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200) {
+              const copy = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            }
+            return response;
+          })
+          .catch(() => undefined);
+        return cached || fetchPromise;
       }),
     );
+    return;
   }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      });
+    }),
+  );
 });

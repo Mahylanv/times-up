@@ -3,14 +3,67 @@ import './globals.css';
 import SwRegister from './components/sw-register';
 
 export const metadata: Metadata = {
-  title: 'Times Up Sprint',
-  description: 'Mini jeu Times Up en 3 rounds pret pour Vercel',
-  applicationName: 'Times Up Sprint',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  title: {
+    default: 'Thempo',
+    template: '%s | Thempo',
+  },
+  description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+  applicationName: 'Thempo',
   manifest: '/manifest.webmanifest',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  keywords: [
+    'thempo',
+    'jeu de cartes',
+    'jeu de societe',
+    'party game',
+    'mimes',
+    'indices',
+    'equipes',
+    'chrono',
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: '/',
+    siteName: 'Thempo',
+    title: 'Thempo',
+    description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Thempo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Thempo',
+    description: "Thempo, jeu de cartes d'indices et de mimes en 3 rounds pour deux a cinq equipes.",
+    images: ['/og-image.png'],
+  },
+  authors: [{ name: 'Thempo' }],
+  creator: 'Thempo',
+  publisher: 'Thempo',
   themeColor: '#0f172a',
   appleWebApp: {
     capable: true,
-    title: 'Times Up Sprint',
+    title: 'Thempo',
     statusBarStyle: 'default',
   },
   icons: {
