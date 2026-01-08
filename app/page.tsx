@@ -250,7 +250,8 @@ const createTeams = (count = MIN_TEAMS): TeamScore[] =>
 
 export default function Home() {
   const [round, setRound] = useState(1);
-  const [deck, setDeck] = useState<string[]>(() => buildDeck(DEFAULT_CARDS_PER_ROUND));
+  const [roundCards, setRoundCards] = useState<string[]>(() => buildDeck(DEFAULT_CARDS_PER_ROUND));
+  const [deck, setDeck] = useState<string[]>(() => shuffle(roundCards));
   const [teams, setTeams] = useState<TeamScore[]>(() => createTeams());
   const [currentTeam, setCurrentTeam] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -271,7 +272,7 @@ export default function Home() {
     () => teams.reduce((acc, team) => acc + team.rounds[round - 1], 0),
     [round, teams],
   );
-  const canEditSettings = !isRunning && (roundFinished || cardsValidatedThisRound === 0);
+  const canEditSettings = !isRunning && round === 1 && cardsValidatedThisRound === 0;
 
   useEffect(() => {
     if (!isRunning) return undefined;
@@ -374,7 +375,7 @@ export default function Home() {
     const nextRound = round + 1;
     const nextTeam = (currentTeam + 1) % teams.length;
     setRound(nextRound);
-    setDeck(buildDeck(cardsPerRound));
+    setDeck(shuffle(roundCards));
     setRoundFinished(false);
     setIsRunning(false);
     setTimeLeft(turnDuration);
@@ -433,7 +434,9 @@ export default function Home() {
 
   const resetGame = () => {
     setRound(1);
-    setDeck(buildDeck(cardsPerRound));
+    const nextRoundCards = buildDeck(cardsPerRound);
+    setRoundCards(nextRoundCards);
+    setDeck(shuffle(nextRoundCards));
     setTeams(createTeams());
     setCurrentTeam(0);
     setIsRunning(false);
@@ -463,9 +466,9 @@ export default function Home() {
   const handleCardsPerRoundChange = (value: number) => {
     if (!canEditSettings) return;
     setCardsPerRound(value);
-    if (!roundFinished) {
-      setDeck(buildDeck(value));
-    }
+    const nextRoundCards = buildDeck(value);
+    setRoundCards(nextRoundCards);
+    setDeck(shuffle(nextRoundCards));
   };
 
   return (
@@ -538,7 +541,7 @@ export default function Home() {
                 </div>
               </div>
               {!canEditSettings && (
-                <p className="muted small-text">Réglages verrouillés pendant le round.</p>
+                <p className="muted small-text">Réglages verrouillés une fois la partie lancée.</p>
               )}
             </div>
           )}
