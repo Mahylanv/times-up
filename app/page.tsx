@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 type TeamScore = {
   name: string;
   rounds: number[];
+  players: string[];
 };
 
 const ROUNDS = 3;
@@ -246,6 +247,7 @@ const createTeams = (count = MIN_TEAMS): TeamScore[] =>
   Array.from({ length: count }, (_, idx) => ({
     name: `Équipe ${TEAM_LABELS[idx]}`,
     rounds: Array(ROUNDS).fill(0),
+    players: [],
   }));
 
 export default function Home() {
@@ -262,6 +264,8 @@ export default function Home() {
   const [gameOver, setGameOver] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [showSettings, setShowSettings] = useState(false);
+  const [playerInput, setPlayerInput] = useState('');
+  const [players, setPlayers] = useState<string[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioUnlockedRef = useRef(false);
 
@@ -437,7 +441,9 @@ export default function Home() {
     const nextRoundCards = buildDeck(cardsPerRound);
     setRoundCards(nextRoundCards);
     setDeck(shuffle(nextRoundCards));
-    setTeams(createTeams());
+    setTeams((prev) =>
+      prev.map((team) => ({ ...team, rounds: Array(ROUNDS).fill(0), players: [] })),
+    );
     setCurrentTeam(0);
     setIsRunning(false);
     setTimeLeft(turnDuration);
@@ -452,9 +458,53 @@ export default function Home() {
       const nextIndex = prev.length;
       return [
         ...prev,
-        { name: `Équipe ${TEAM_LABELS[nextIndex]}`, rounds: Array(ROUNDS).fill(0) },
+        { name: `Équipe ${TEAM_LABELS[nextIndex]}`, rounds: Array(ROUNDS).fill(0), players: [] },
       ];
     });
+  };
+
+  const handleRemoveTeam = () => {
+    setTeams((prev) => {
+      if (prev.length <= MIN_TEAMS) return prev;
+      const nextTeams = prev.slice(0, -1);
+      if (currentTeam >= nextTeams.length) {
+        setCurrentTeam(0);
+      }
+      return nextTeams;
+    });
+  };
+
+  const handleRemoveTeamAt = (index: number) => {
+    setTeams((prev) => {
+      if (prev.length <= MIN_TEAMS) return prev;
+      const nextTeams = prev.filter((_, idx) => idx !== index);
+      if (currentTeam >= nextTeams.length) {
+        setCurrentTeam(0);
+      }
+      return nextTeams;
+    });
+  };
+
+  const handleAddPlayer = () => {
+    const name = playerInput.trim();
+    if (!name) return;
+    setPlayers((prev) => [...prev, name]);
+    setPlayerInput('');
+  };
+
+  const handleRemovePlayer = (index: number) => {
+    setPlayers((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const handleShuffleTeams = () => {
+    if (!players.length) return;
+    const shuffled = shuffle(players);
+    const nextTeams = teams.map((team) => ({ ...team, players: [] as string[] }));
+    shuffled.forEach((player, idx) => {
+      nextTeams[idx % nextTeams.length].players.push(player);
+    });
+    setTeams(nextTeams);
+    setMessage('Equipes melangees !');
   };
 
   const handleTurnDurationChange = (value: number) => {
@@ -567,6 +617,47 @@ export default function Home() {
         </div>
       </div>
 
+      <div className="surface" style={{ marginTop: 18, marginBottom: 18 }}>
+        <div className="inline" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+          <h3>Joueurs</h3>
+          <span className="pill">Répartition automatique équitable</span>
+        </div>
+        <div className="stack">
+          <div className="actions">
+            <input
+              className="input"
+              type="text"
+              value={playerInput}
+              onChange={(event) => setPlayerInput(event.target.value)}
+              placeholder="Ajouter un joueur"
+              disabled={isRunning}
+            />
+            <button className="btn-accent" onClick={handleAddPlayer} disabled={isRunning || !playerInput.trim()}>
+              Ajouter
+            </button>
+            <button className="btn-primary" onClick={handleShuffleTeams} disabled={isRunning || players.length === 0}>
+              Répartir aléatoirement
+            </button>
+          </div>
+          {players.length > 0 ? (
+            <div className="chips">
+              {players.map((player, idx) => (
+                <button
+                  key={`${player}-${idx}`}
+                  className="pill"
+                  onClick={() => handleRemovePlayer(idx)}
+                  disabled={isRunning}
+                >
+                  {player} ✕
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="muted small-text">Ajoute des joueurs pour les répartir.</p>
+          )}
+        </div>
+      </div>
+
       <div className="grid">
         <div className="surface card">
           <div>
@@ -639,10 +730,10 @@ export default function Home() {
       </div>
 
       <div className="surface" style={{ marginTop: 18 }}>
-          <div className="inline" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
-            <h3>Scores par équipe</h3>
+        <div className="inline" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+          <h3>Scores par équipe</h3>
           <span className="pill">{ROUNDS} rounds - {cardsPerRound} cartes remises en jeu à chaque manche</span>
-          </div>
+        </div>
         <div className="scores">
           {teams.map((team, idx) => {
             const total = team.rounds.reduce((a, b) => a + b, 0);
@@ -653,7 +744,18 @@ export default function Home() {
                     <span style={{ background: TEAM_COLORS[idx % TEAM_COLORS.length] }} />
                     {team.name}
                   </span>
-                  <span className="pill">Total {total}</span>
+                  <div className="inline">
+                    <span className="pill">Total {total}</span>
+                    {teams.length > MIN_TEAMS && !isRunning && (
+                      <button
+                        className="btn-ghost btn-icon"
+                        onClick={() => handleRemoveTeamAt(idx)}
+                        aria-label={`Supprimer ${team.name}`}
+                      >
+                        −
+                      </button>
+                    )}
+                  </div>
                 </div>
                 {team.rounds.map((score, rIdx) => (
                   <div key={rIdx} className="score-row">
@@ -661,6 +763,12 @@ export default function Home() {
                     <strong>{score}</strong>
                   </div>
                 ))}
+                {team.players.length > 0 && (
+                  <div className="score-row">
+                    <span>Joueurs</span>
+                    <strong>{team.players.join(', ')}</strong>
+                  </div>
+                )}
               </div>
             );
           })}

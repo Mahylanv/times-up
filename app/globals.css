@@ -228,6 +228,20 @@ button {
   transition: transform 120ms ease, box-shadow 160ms ease, filter 160ms ease;
 }
 
+.input {
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
+  font-size: 15px;
+  min-width: 180px;
+}
+
+.input::placeholder {
+  color: var(--muted);
+}
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -260,6 +274,25 @@ button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-small {
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  padding: 0;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+  background: linear-gradient(135deg, #f43f5e, #a855f7);
+  border: none;
 }
 
 .scores {
