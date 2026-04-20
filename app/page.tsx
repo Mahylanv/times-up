@@ -266,6 +266,7 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [playerInput, setPlayerInput] = useState('');
   const [players, setPlayers] = useState<string[]>([]);
+  const [carryOverTime, setCarryOverTime] = useState<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioUnlockedRef = useRef(false);
 
@@ -357,6 +358,7 @@ export default function Home() {
     playBuzzer();
     setIsRunning(false);
     setTimeLeft(turnDuration);
+    setCarryOverTime(null);
     setMessage("Temps écoulé ! À l'équipe suivante.");
     setCurrentTeam((prev) => (prev + 1) % teams.length);
   };
@@ -364,7 +366,7 @@ export default function Home() {
   const completeRound = () => {
     setIsRunning(false);
     setRoundFinished(true);
-    setTimeLeft(turnDuration);
+    setCarryOverTime(timeLeft);
     setMessage(`Round ${round} terminé !`);
     if (round === ROUNDS) {
       setGameOver(true);
@@ -377,15 +379,14 @@ export default function Home() {
       return;
     }
     const nextRound = round + 1;
-    const nextTeam = (currentTeam + 1) % teams.length;
+    const remaining = carryOverTime ?? turnDuration;
     setRound(nextRound);
     setDeck(shuffle(roundCards));
     setRoundFinished(false);
     setIsRunning(false);
-    setTimeLeft(turnDuration);
-    setCurrentTeam(nextTeam);
+    setTimeLeft(remaining);
     setMessage(
-      `Round ${nextRound} lancé, ${ROUND_RULES[nextRound - 1].toLowerCase()} - à ${teams[nextTeam].name} de jouer !`,
+      `Round ${nextRound} lancé, ${ROUND_RULES[nextRound - 1].toLowerCase()} - à ${teams[currentTeam].name} de continuer avec ${remaining}s !`,
     );
   };
 
@@ -398,7 +399,8 @@ export default function Home() {
     unlockAudio();
     setMessage('');
     setIsRunning(true);
-    setTimeLeft(turnDuration);
+    setTimeLeft(carryOverTime !== null ? carryOverTime : turnDuration);
+    setCarryOverTime(null);
   };
 
   const updateScore = () => {
@@ -449,6 +451,7 @@ export default function Home() {
     setTimeLeft(turnDuration);
     setRoundFinished(false);
     setGameOver(false);
+    setCarryOverTime(null);
     setMessage('Nouvelle partie, à Équipe A de lancer !');
   };
 
